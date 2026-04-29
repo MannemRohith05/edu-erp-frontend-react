@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import type { User } from '../types';
 import './LoginPage.css';
 
 const demoAccounts = [
-    { role: 'Admin', email: 'rohithmannemofficial@gmail.com', password: 'password123', icon: '👤' },
-    { role: 'Administrator', email: 'administrator@eduerp.com', password: 'password123', icon: '🛡️' },
-    { role: 'Teacher', email: 'teacher@eduerp.com', password: 'password123', icon: '👨‍🏫' },
-    { role: 'Student', email: 'student1@gmail.com', password: 'password123', icon: '🎓' },
+    { id: 1, role: 'Admin', roleValue: 'ADMIN', email: 'rohithmannemofficial@gmail.com', password: 'password123', firstName: 'System', lastName: 'Admin', icon: '👤' },
+    { id: 2, role: 'Administrator', roleValue: 'ADMINISTRATOR', email: 'administrator@eduerp.com', password: 'password123', firstName: 'Demo', lastName: 'Administrator', icon: '🛡️' },
+    { id: 3, role: 'Teacher', roleValue: 'TEACHER', email: 'teacher@eduerp.com', password: 'password123', firstName: 'Demo', lastName: 'Teacher', icon: '👨‍🏫' },
+    { id: 4, role: 'Student', roleValue: 'STUDENT', email: 'student1@gmail.com', password: 'password123', firstName: 'Demo', lastName: 'Student', icon: '🎓' },
 ];
 
 export default function LoginPage() {
-    const { login, verifyOtp, isAuthenticated, user } = useAuth();
+    const { login, demoLogin, verifyOtp, isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -43,6 +44,18 @@ export default function LoginPage() {
         navigate(routes[user.role] || '/');
     };
 
+    const getRouteForRole = (role: string) => {
+        const routes: Record<string, string> = {
+            ADMIN: '/admin', TEACHER: '/teacher', STUDENT: '/student', ADMINISTRATOR: '/administrator',
+        };
+        return routes[role] || '/';
+    };
+
+    const getDemoAccount = () => demoAccounts.find((account) =>
+        account.email.toLowerCase() === email.trim().toLowerCase() &&
+        account.password === password
+    );
+
     const handleRoleSelect = (role: string) => {
         const account = demoAccounts.find(a => a.role === role);
         if (account) {
@@ -63,6 +76,20 @@ export default function LoginPage() {
         try {
             if (!otpSent) {
                 if (!email || !password) { setError('Please enter email and password'); setLoading(false); return; }
+                const demoAccount = getDemoAccount();
+                if (demoAccount) {
+                    const demoUser: User = {
+                        id: demoAccount.id,
+                        email: demoAccount.email,
+                        firstName: demoAccount.firstName,
+                        lastName: demoAccount.lastName,
+                        role: demoAccount.roleValue as User['role'],
+                    };
+                    demoLogin(demoUser);
+                    navigate(getRouteForRole(demoUser.role));
+                    setLoading(false);
+                    return;
+                }
                 const response = await login({ email, password });
                 setOtpSent(true);
                 setOtpMessage(response.message || 'OTP sent to your email');
@@ -109,7 +136,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="demo-login-section">
-                    <label className="demo-label">Quick Login As</label>
+                    <label className="demo-label">Demo Login - No OTP Required</label>
                     <div className="demo-buttons">
                         {demoAccounts.map((account) => (
                             <button
@@ -161,7 +188,7 @@ export default function LoginPage() {
                     )}
                     {error && <div className="error-message">{error}</div>}
                     <button type="submit" className="btn-primary" disabled={loading}>
-                        {loading ? <span className="spinner"></span> : otpSent ? 'Verify OTP' : 'Send OTP'}
+                        {loading ? <span className="spinner"></span> : otpSent ? 'Verify OTP' : getDemoAccount() ? 'Login to Demo Dashboard' : 'Send OTP'}
                     </button>
                 </form>
                 <div className="footer-links">
