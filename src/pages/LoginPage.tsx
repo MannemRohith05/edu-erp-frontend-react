@@ -23,7 +23,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [animateCard, setAnimateCard] = useState(false);
     const [shakeCard, setShakeCard] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('');
+
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -67,7 +67,7 @@ export default function LoginPage() {
     const handleDemoDashboardOpen = (account: typeof demoAccounts[number]) => {
         setEmail(account.email);
         setPassword(account.password);
-        setSelectedRole(account.role);
+
         setError('');
         setOtp('');
         setOtpSent(false);
@@ -138,22 +138,25 @@ export default function LoginPage() {
                     <p>Educational Resource Planning</p>
                 </div>
 
-                <div className="demo-login-section">
-                    <label className="demo-label">Open Demo Dashboard</label>
-                    <div className="demo-buttons">
+                <div className="direct-demo-section">
+                    <div className="direct-demo-header">
+                        <span className="line"></span>
+                        <span className="text">Direct Demo Dashboards</span>
+                        <span className="line"></span>
+                    </div>
+                    <div className="direct-demo-grid">
                         {demoAccounts.map((account) => (
                             <button
                                 key={account.role}
                                 type="button"
-                                className={`demo-btn ${selectedRole === account.role ? 'active' : ''}`}
+                                className={`direct-demo-btn role-${account.roleValue.toLowerCase()}`}
                                 onClick={() => handleDemoDashboardOpen(account)}
                             >
-                                <span className="demo-btn-icon">{account.icon}</span>
-                                <span className="demo-btn-content">
-                                    <span className="demo-btn-label">{account.role}</span>
-                                    <span className="demo-btn-email">{account.email}</span>
-                                    <span className="demo-btn-password">Click to open dashboard</span>
-                                </span>
+                                <span className="btn-icon">{account.icon}</span>
+                                <span className="btn-text">{account.role} Dashboard</span>
+                                <svg className="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
                             </button>
                         ))}
                     </div>

@@ -94,88 +94,118 @@
     font-size: 0.9rem;
 }
 
-.demo-login-section {
-    margin-bottom: 28px;
+.direct-demo-section {
+    margin-bottom: 32px;
+    position: relative;
 }
 
-.demo-label {
-    display: block;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-align: center;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.demo-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-}
-
-.demo-btn {
+.direct-demo-header {
     display: flex;
-    min-width: 0;
     align-items: center;
-    gap: 10px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: inherit;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.demo-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
-    border-color: rgba(102, 126, 234, 0.3);
-    color: #fff;
-    transform: translateY(-2px);
+.direct-demo-header .line {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
 }
 
-.demo-btn.active {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-    border-color: #667eea;
-    color: #fff;
-    box-shadow: 0 4px 15px -3px rgba(102, 126, 234, 0.4);
-}
-
-.demo-btn-icon {
-    flex: 0 0 auto;
-    font-size: 22px;
-}
-
-.demo-btn-content {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    text-align: left;
-}
-
-.demo-btn-label {
+.direct-demo-header .text {
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.75rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
-.demo-btn-email,
-.demo-btn-password {
-    overflow: hidden;
+.direct-demo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.direct-demo-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff;
     width: 100%;
-    color: rgba(255, 255, 255, 0.56);
-    font-size: 0.68rem;
-    line-height: 1.2;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
 }
 
-.demo-btn.active .demo-btn-email,
-.demo-btn.active .demo-btn-password {
-    color: rgba(255, 255, 255, 0.78);
+.direct-demo-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.direct-demo-btn.role-admin::before { background: #ef4444; }
+.direct-demo-btn.role-administrator::before { background: #f59e0b; }
+.direct-demo-btn.role-teacher::before { background: #3b82f6; }
+.direct-demo-btn.role-student::before { background: #10b981; }
+
+.direct-demo-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.direct-demo-btn:hover::before {
+    width: 6px;
+}
+
+.direct-demo-btn.role-admin:hover { border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.2); }
+.direct-demo-btn.role-administrator:hover { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2); }
+.direct-demo-btn.role-teacher:hover { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2); }
+.direct-demo-btn.role-student:hover { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2); }
+
+.direct-demo-btn .btn-icon {
+    font-size: 1.25rem;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.direct-demo-btn .btn-text {
+    flex: 1;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+.direct-demo-btn .btn-arrow {
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    transform: translateX(-4px);
+}
+
+.direct-demo-btn:hover .btn-arrow {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .login-form {

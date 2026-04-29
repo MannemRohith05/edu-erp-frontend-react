@@ -20,6 +20,27 @@ export default function AdminStudents() {
     const branches = [...new Set(students.map(s => s.department))].sort();
     const branchCounts: Record<string, number> = {};
     students.forEach(s => { branchCounts[s.department] = (branchCounts[s.department] || 0) + 1; });
+    const semesterCounts: Record<number, number> = {};
+    const enrollmentYearCounts: Record<string, number> = {};
+    students.forEach(s => {
+        semesterCounts[s.semester] = (semesterCounts[s.semester] || 0) + 1;
+        const year = s.enrollmentDate ? new Date(s.enrollmentDate).getFullYear().toString() : 'Unknown';
+        enrollmentYearCounts[year] = (enrollmentYearCounts[year] || 0) + 1;
+    });
+
+    const maxBranchCount = Math.max(...Object.values(branchCounts), 1);
+    const maxSemesterCount = Math.max(...Object.values(semesterCounts), 1);
+    const enrollmentYears = Object.keys(enrollmentYearCounts).sort();
+    const maxEnrollmentCount = Math.max(...Object.values(enrollmentYearCounts), 1);
+
+    const branchInsights = branches.map(branch => ({
+        branch,
+        total: branchCounts[branch] || 0,
+        share: students.length ? Math.round(((branchCounts[branch] || 0) / students.length) * 100) : 0,
+        avgSemester: students.filter(s => s.department === branch).length
+            ? (students.filter(s => s.department === branch).reduce((sum, s) => sum + s.semester, 0) / students.filter(s => s.department === branch).length).toFixed(1)
+            : '0.0',
+    }));
 
     const filtered = students.filter(s => {
         const matchSearch = `${s.firstName} ${s.lastName} ${s.email} ${s.studentId} ${s.department}`.toLowerCase().includes(search.toLowerCase());
@@ -84,6 +105,91 @@ export default function AdminStudents() {
                 {branches.map(b => (
                     <button key={b} onClick={() => setFilterBranch(b)} style={{ padding: '6px 16px', borderRadius: 20, border: 'none', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', background: filterBranch === b ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'rgba(255,255,255,0.06)', color: filterBranch === b ? '#fff' : 'rgba(255,255,255,0.5)' }}>{b} ({branchCounts[b] || 0})</button>
                 ))}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 24 }}>
+                <div className="admin-table-card" style={{ padding: 22 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+                        <div>
+                            <h3 style={{ color: '#fff', margin: 0, fontSize: '1rem' }}>Student Graph Analysis</h3>
+                            <p style={{ color: 'rgba(255,255,255,0.45)', margin: '6px 0 0', fontSize: '0.8rem' }}>Distribution by branch, semester, and admission year</p>
+                        </div>
+                        <span style={{ color: '#4facfe', fontSize: '0.8rem', fontWeight: 700 }}>{students.length} students</span>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+                        <div>
+                            <h4 style={{ color: 'rgba(255,255,255,0.75)', margin: '0 0 12px', fontSize: '0.8rem', textTransform: 'uppercase' }}>Branch Strength</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                {branchInsights.map(item => (
+                                    <div key={item.branch}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.72)', fontSize: '0.78rem', marginBottom: 5 }}>
+                                            <span>{item.branch}</span>
+                                            <span>{item.total} ({item.share}%)</span>
+                                        </div>
+                                        <div style={{ height: 10, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                                            <div style={{ width: `${(item.total / maxBranchCount) * 100}%`, height: '100%', borderRadius: 999, background: 'linear-gradient(90deg, #4facfe, #22c55e)' }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style={{ color: 'rgba(255,255,255,0.75)', margin: '0 0 12px', fontSize: '0.8rem', textTransform: 'uppercase' }}>Semester Spread</h4>
+                            <div style={{ height: 190, display: 'flex', alignItems: 'end', gap: 10, padding: '12px 6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                                {Array.from({ length: 8 }, (_, i) => i + 1).map(sem => {
+                                    const count = semesterCounts[sem] || 0;
+                                    return (
+                                        <div key={sem} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+                                            <span style={{ color: '#fff', fontSize: '0.72rem', fontWeight: 700 }}>{count}</span>
+                                            <div style={{ width: '100%', minWidth: 18, height: `${Math.max(8, (count / maxSemesterCount) * 130)}px`, borderRadius: '8px 8px 0 0', background: 'linear-gradient(180deg, #a855f7, #667eea)' }} />
+                                            <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.7rem' }}>S{sem}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: 22 }}>
+                        <h4 style={{ color: 'rgba(255,255,255,0.75)', margin: '0 0 12px', fontSize: '0.8rem', textTransform: 'uppercase' }}>Enrollment Trend</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 10 }}>
+                            {enrollmentYears.map(year => {
+                                const count = enrollmentYearCounts[year] || 0;
+                                return (
+                                    <div key={year} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: 12 }}>
+                                        <div style={{ height: 8, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginBottom: 10 }}>
+                                            <div style={{ width: `${(count / maxEnrollmentCount) * 100}%`, height: '100%', borderRadius: 999, background: 'linear-gradient(90deg, #f59e0b, #f97316)' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem' }}>{year}</span>
+                                            <span style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 800 }}>{count}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="admin-table-card" style={{ padding: 22 }}>
+                    <h3 style={{ color: '#fff', margin: '0 0 14px', fontSize: '1rem' }}>Branch Insights</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {branchInsights.map(item => (
+                            <div key={item.branch} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'center', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                <div>
+                                    <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.85rem' }}>{item.branch}</div>
+                                    <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: '0.74rem', marginTop: 3 }}>Avg semester {item.avgSemester}</div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ color: '#4facfe', fontWeight: 800, fontSize: '1rem' }}>{item.total}</div>
+                                    <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: '0.72rem' }}>{item.share}%</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div className="admin-table-card">
