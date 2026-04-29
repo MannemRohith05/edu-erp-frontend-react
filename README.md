@@ -30,7 +30,8 @@ VITE_BASE_PATH=/
 
 ## Demo Credentials
 
-- Admin: `admin@eduerp.com` / `password123`
+- Admin: `rohithmannemofficial@gmail.com` / `password123`
+- Administrator: `administrator@eduerp.com` / `password123`
 - Teacher: `deepika.rao@eduerp.com` / `password123`
 - Student: `sneha.kumar@eduerp.com` / `password123`
 

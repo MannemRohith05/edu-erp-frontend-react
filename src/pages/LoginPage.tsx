@@ -4,16 +4,20 @@ import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
 const demoAccounts = [
-    { role: 'Admin', email: 'admin@eduerp.com', password: 'password123', icon: '👤' },
-    { role: 'Teacher', email: 'deepika.rao@eduerp.com', password: 'password123', icon: '👨‍🏫' },
-    { role: 'Student', email: 'sneha.kumar@eduerp.com', password: 'password123', icon: '🎓' },
+    { role: 'Admin', email: 'rohithmannemofficial@gmail.com', password: 'password123', icon: '👤' },
+    { role: 'Administrator', email: 'administrator@eduerp.com', password: 'password123', icon: '🛡️' },
+    { role: 'Teacher', email: 'teacher@eduerp.com', password: 'password123', icon: '👨‍🏫' },
+    { role: 'Student', email: 'student1@gmail.com', password: 'password123', icon: '🎓' },
 ];
 
 export default function LoginPage() {
-    const { login, isAuthenticated, user } = useAuth();
+    const { login, verifyOtp, isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [otp, setOtp] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpMessage, setOtpMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [animateCard, setAnimateCard] = useState(false);
@@ -46,23 +50,42 @@ export default function LoginPage() {
             setPassword(account.password);
             setSelectedRole(role);
             setError('');
+            setOtp('');
+            setOtpSent(false);
+            setOtpMessage('');
         }
     };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email || !password) { setError('Please enter email and password'); return; }
         setLoading(true);
         setError('');
         try {
-            await login({ email, password });
+            if (!otpSent) {
+                if (!email || !password) { setError('Please enter email and password'); setLoading(false); return; }
+                const response = await login({ email, password });
+                setOtpSent(true);
+                setOtpMessage(response.message || 'OTP sent to your email');
+                setLoading(false);
+                return;
+            }
+
+            if (!otp) { setError('Please enter the OTP'); setLoading(false); return; }
+            await verifyOtp({ email, otp });
             setTimeout(() => redirectToDashboard(), 500);
         } catch (err: any) {
             setLoading(false);
-            setError(err.response?.data?.message || 'Invalid email or password');
+            setError(err.response?.data?.message || (otpSent ? 'Invalid OTP' : 'Invalid email or password'));
             setShakeCard(true);
             setTimeout(() => setShakeCard(false), 400);
         }
+    };
+
+    const handleChangeLogin = () => {
+        setOtp('');
+        setOtpSent(false);
+        setOtpMessage('');
+        setError('');
     };
 
     return (
@@ -96,7 +119,11 @@ export default function LoginPage() {
                                 onClick={() => handleRoleSelect(account.role)}
                             >
                                 <span className="demo-btn-icon">{account.icon}</span>
-                                <span className="demo-btn-label">{account.role}</span>
+                                <span className="demo-btn-content">
+                                    <span className="demo-btn-label">{account.role}</span>
+                                    <span className="demo-btn-email">{account.email}</span>
+                                    <span className="demo-btn-password">{account.password}</span>
+                                </span>
                             </button>
                         ))}
                     </div>
@@ -105,15 +132,36 @@ export default function LoginPage() {
                 <form onSubmit={handleLogin} className="login-form">
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Enter your email" />
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Enter your email" disabled={otpSent} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" />
+                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" disabled={otpSent} />
                     </div>
+                    {otpSent && (
+                        <>
+                            <div className="success-message">{otpMessage}</div>
+                            <div className="form-group">
+                                <label htmlFor="otp">OTP</label>
+                                <input
+                                    type="text"
+                                    id="otp"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                    required
+                                    placeholder="Enter 6-digit OTP"
+                                    inputMode="numeric"
+                                    maxLength={6}
+                                />
+                            </div>
+                            <button type="button" className="btn-secondary" onClick={handleChangeLogin} disabled={loading}>
+                                Change email or resend
+                            </button>
+                        </>
+                    )}
                     {error && <div className="error-message">{error}</div>}
                     <button type="submit" className="btn-primary" disabled={loading}>
-                        {loading ? <span className="spinner"></span> : 'Sign In'}
+                        {loading ? <span className="spinner"></span> : otpSent ? 'Verify OTP' : 'Send OTP'}
                     </button>
                 </form>
                 <div className="footer-links">

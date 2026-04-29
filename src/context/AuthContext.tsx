@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import axios from 'axios';
-import type { User, AuthResponse, LoginRequest, RegisterRequest } from '../types';
+import type { User, AuthResponse, LoginOtpResponse, LoginRequest, RegisterRequest, VerifyOtpRequest } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -8,7 +8,8 @@ interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     loading: boolean;
-    login: (credentials: LoginRequest) => Promise<void>;
+    login: (credentials: LoginRequest) => Promise<LoginOtpResponse>;
+    verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;
     logout: () => void;
     getToken: () => string | null;
@@ -49,7 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const login = async (credentials: LoginRequest) => {
-        const res = await axios.post<AuthResponse>(`${API_URL}/auth/login`, credentials);
+        const res = await axios.post<LoginOtpResponse>(`${API_URL}/auth/login`, credentials);
+        return res.data;
+    };
+
+    const verifyOtp = async (data: VerifyOtpRequest) => {
+        const res = await axios.post<AuthResponse>(`${API_URL}/auth/verify-otp`, data);
         handleAuthSuccess(res.data);
     };
 
@@ -73,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const hasAnyRole = (roles: string[]) => user ? roles.includes(user.role) : false;
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, register, logout, getToken, hasRole, hasAnyRole }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, verifyOtp, register, logout, getToken, hasRole, hasAnyRole }}>
             {children}
         </AuthContext.Provider>
     );

@@ -19,6 +19,17 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface LoginOtpResponse {
+  message: string;
+  email: string;
+  expiresInSeconds: number;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
 export interface RegisterRequest {
   email: string;
   password: string;
