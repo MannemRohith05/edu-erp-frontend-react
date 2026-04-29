@@ -56,17 +56,26 @@ export default function LoginPage() {
         account.password === password
     );
 
-    const handleRoleSelect = (role: string) => {
-        const account = demoAccounts.find(a => a.role === role);
-        if (account) {
-            setEmail(account.email);
-            setPassword(account.password);
-            setSelectedRole(role);
-            setError('');
-            setOtp('');
-            setOtpSent(false);
-            setOtpMessage('');
-        }
+    const createDemoUser = (account: typeof demoAccounts[number]): User => ({
+        id: account.id,
+        email: account.email,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        role: account.roleValue as User['role'],
+    });
+
+    const handleDemoDashboardOpen = (account: typeof demoAccounts[number]) => {
+        setEmail(account.email);
+        setPassword(account.password);
+        setSelectedRole(account.role);
+        setError('');
+        setOtp('');
+        setOtpSent(false);
+        setOtpMessage('');
+
+        const demoUser = createDemoUser(account);
+        demoLogin(demoUser);
+        navigate(getRouteForRole(demoUser.role));
     };
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -78,13 +87,7 @@ export default function LoginPage() {
                 if (!email || !password) { setError('Please enter email and password'); setLoading(false); return; }
                 const demoAccount = getDemoAccount();
                 if (demoAccount) {
-                    const demoUser: User = {
-                        id: demoAccount.id,
-                        email: demoAccount.email,
-                        firstName: demoAccount.firstName,
-                        lastName: demoAccount.lastName,
-                        role: demoAccount.roleValue as User['role'],
-                    };
+                    const demoUser = createDemoUser(demoAccount);
                     demoLogin(demoUser);
                     navigate(getRouteForRole(demoUser.role));
                     setLoading(false);
@@ -136,20 +139,20 @@ export default function LoginPage() {
                 </div>
 
                 <div className="demo-login-section">
-                    <label className="demo-label">Demo Login - No OTP Required</label>
+                    <label className="demo-label">Open Demo Dashboard</label>
                     <div className="demo-buttons">
                         {demoAccounts.map((account) => (
                             <button
                                 key={account.role}
                                 type="button"
                                 className={`demo-btn ${selectedRole === account.role ? 'active' : ''}`}
-                                onClick={() => handleRoleSelect(account.role)}
+                                onClick={() => handleDemoDashboardOpen(account)}
                             >
                                 <span className="demo-btn-icon">{account.icon}</span>
                                 <span className="demo-btn-content">
                                     <span className="demo-btn-label">{account.role}</span>
                                     <span className="demo-btn-email">{account.email}</span>
-                                    <span className="demo-btn-password">{account.password}</span>
+                                    <span className="demo-btn-password">Click to open dashboard</span>
                                 </span>
                             </button>
                         ))}
