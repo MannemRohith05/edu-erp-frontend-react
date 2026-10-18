@@ -14,13 +14,16 @@ import AdminStudents from './pages/admin/AdminStudents';
 import AdminTeachers from './pages/admin/AdminTeachers';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminSchedules from './pages/admin/AdminSchedules';
+import AdminFees from './pages/admin/AdminFees';
+import AdminCertificates from './pages/admin/AdminCertificates';
+import AdminPayroll from './pages/admin/AdminPayroll';
 
 // Teacher pages
 import TeacherOverview from './pages/teacher/TeacherOverview';
 import TeacherCourses from './pages/teacher/TeacherCourses';
 import TeacherAttendance from './pages/teacher/TeacherAttendance';
-import TeacherCertifications from './pages/teacher/TeacherCertifications';
 import TeacherTimetable from './pages/teacher/TeacherTimetable';
+import TeacherPayroll from './pages/teacher/TeacherPayroll';
 
 // Student pages — FUNCTIONAL
 import StudentHome from './pages/student/StudentHome';
@@ -32,6 +35,7 @@ import StudentTimetable from './pages/student/StudentTimetable';
 import StudentFees from './pages/student/StudentFees';
 import StudentResults from './pages/student/StudentResults';
 import StudentCourseRegistration from './pages/student/StudentCourseRegistration';
+import StudentCertificates from './pages/student/StudentCertificates';
 
 
 
@@ -53,6 +57,9 @@ function App() {
             <Route path="teachers" element={<AdminTeachers />} />
             <Route path="courses" element={<AdminCourses />} />
             <Route path="schedules" element={<AdminSchedules />} />
+            <Route path="fees" element={<AdminFees />} />
+            <Route path="certificates" element={<AdminCertificates />} />
+            <Route path="payroll" element={<AdminPayroll />} />
           </Route>
 
           {/* Administrator alias */}
@@ -63,6 +70,9 @@ function App() {
             <Route path="teachers" element={<AdminTeachers />} />
             <Route path="courses" element={<AdminCourses />} />
             <Route path="schedules" element={<AdminSchedules />} />
+            <Route path="fees" element={<AdminFees />} />
+            <Route path="certificates" element={<AdminCertificates />} />
+            <Route path="payroll" element={<AdminPayroll />} />
           </Route>
 
           {/* Teacher routes with layout */}
@@ -70,8 +80,9 @@ function App() {
             <Route index element={<TeacherOverview />} />
             <Route path="courses" element={<TeacherCourses />} />
             <Route path="attendance" element={<TeacherAttendance />} />
+            <Route path="students" element={<AdminStudents />} />
             <Route path="timetable" element={<TeacherTimetable />} />
-            <Route path="certifications" element={<TeacherCertifications />} />
+            <Route path="payroll" element={<TeacherPayroll />} />
           </Route>
 
           {/* Student routes with layout */}
@@ -86,6 +97,7 @@ function App() {
             <Route path="cgpa" element={<StudentResults />} />
             <Route path="profile/view" element={<StudentProfile />} />
             <Route path="timetable" element={<StudentTimetable />} />
+            <Route path="certificates" element={<StudentCertificates />} />
           </Route>
 
           {/* Catch all */}

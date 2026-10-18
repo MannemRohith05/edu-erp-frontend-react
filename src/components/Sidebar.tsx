@@ -38,6 +38,7 @@ const menuItems: MenuItem[] = [
     { label: 'My CGPA', icon: '📊', route: '/student/cgpa' },
     { label: 'Profile', icon: '👤', route: '/student/profile/view' },
     { label: 'Time Table', icon: '📅', route: '/student/timetable' },
+    { label: 'My Certificates', icon: '📜', route: '/student/certificates' },
 ];
 
 export default function Sidebar({ userId, isCollapsed, searchQuery, onLogout, onToggle }: SidebarProps) {

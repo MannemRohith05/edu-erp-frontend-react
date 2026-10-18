@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getTeacherByUserId, getCoursesByTeacher } from '../../services/api';
+import { getMyCourses } from '../../services/api';
 import type { Course } from '../../types';
 
 export default function TeacherOverview() {
@@ -12,12 +12,8 @@ export default function TeacherOverview() {
 
     useEffect(() => {
         if (!user) return;
-        getTeacherByUserId(user.id)
-            .then(teacher => {
-                setDepartment(teacher.department);
-                return getCoursesByTeacher(teacher.id);
-            })
-            .then(c => { setCourses(c); setLoading(false); })
+        getMyCourses()
+            .then(c => { setCourses(c); setDepartment(c[0]?.department || ''); setLoading(false); })
             .catch(() => setLoading(false));
     }, [user]);
 
@@ -51,7 +47,7 @@ export default function TeacherOverview() {
                     <div className="admin-action-list">
                         <Link to="/teacher/courses" className="admin-action-item">📚 View My Courses</Link>
                         <Link to="/teacher/attendance" className="admin-action-item">📋 Mark Attendance</Link>
-                        <Link to="/teacher/certifications" className="admin-action-item">🏆 Certifications & Achievements</Link>
+                        <Link to="/teacher/payroll" className="admin-action-item">💼 My Salary & Payments</Link>
                     </div>
                 </div>
                 <div className="admin-action-card">

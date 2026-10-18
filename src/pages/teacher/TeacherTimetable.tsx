@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getTeacherByUserId, getSchedulesByTeacher } from '../../services/api';
+import { getMySchedules } from '../../services/api';
 import type { Schedule } from '../../types';
 
 const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
@@ -17,8 +17,7 @@ export default function TeacherTimetable() {
 
     useEffect(() => {
         if (!user) return;
-        getTeacherByUserId(user.id)
-            .then(teacher => getSchedulesByTeacher(teacher.id))
+        getMySchedules()
             .then(s => { setSchedules(s); setLoading(false); })
             .catch(() => setLoading(false));
     }, [user]);

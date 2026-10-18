@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getTeacherByUserId, getCoursesByTeacher, getStudentsByCourse } from '../../services/api';
+import { getMyCourses, getStudentsByCourse } from '../../services/api';
 import type { Course, Student } from '../../types';
 
 export default function TeacherCourses() {
@@ -14,8 +14,7 @@ export default function TeacherCourses() {
 
     useEffect(() => {
         if (!user) return;
-        getTeacherByUserId(user.id)
-            .then(teacher => getCoursesByTeacher(teacher.id))
+        getMyCourses()
             .then(c => { setCourses(c); setLoading(false); })
             .catch(() => setLoading(false));
     }, [user]);

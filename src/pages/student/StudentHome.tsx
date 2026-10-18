@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentByUserId, getCoursesByStudent, getAttendanceByStudent, getAverageGrade } from '../../services/api';
+import { getStudentByUserId, getCoursesByStudent, getAttendanceByStudent, getMyAcademicSummary, getMyFeeLedger } from '../../services/api';
 import type { Course, Attendance } from '../../types';
 import PageContainer from '../../components/PageContainer';
 import './StudentHome.css';
@@ -11,6 +11,7 @@ export default function StudentHome() {
     const [coursesCount, setCoursesCount] = useState(0);
     const [attendancePct, setAttendancePct] = useState(0);
     const [avgGrade, setAvgGrade] = useState(0);
+    const [pendingDues, setPendingDues] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -20,21 +21,23 @@ export default function StudentHome() {
                 return Promise.all([
                     getCoursesByStudent(s.id).catch(() => []),
                     getAttendanceByStudent(s.id).catch(() => []),
-                    getAverageGrade(s.id).catch(() => 0),
+                    getMyAcademicSummary().catch(() => ({ cgpa: 0 })),
+                    getMyFeeLedger().catch(() => []),
                 ]);
             })
-            .then(([courses, attendance, avg]) => {
+            .then(([courses, attendance, summary, ledger]) => {
                 setCoursesCount((courses as Course[]).length);
                 const att = attendance as Attendance[];
                 const present = att.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
                 setAttendancePct(att.length > 0 ? Math.round((present / att.length) * 100) : 0);
-                setAvgGrade(avg as number);
+                setAvgGrade(Number((summary as { cgpa?: number }).cgpa || 0));
+                setPendingDues((ledger as { balance?: number }[]).reduce((sum, item) => sum + Number(item.balance || 0), 0));
                 setLoading(false);
             })
             .catch(() => setLoading(false));
     }, [user]);
 
-    const cgpa = avgGrade > 0 ? (avgGrade / 10).toFixed(1) : '0.0';
+    const cgpa = avgGrade.toFixed(2);
 
     return (
         <PageContainer title="Dashboard" subtitle={`Welcome back, ${userName}!`}>
@@ -63,7 +66,7 @@ export default function StudentHome() {
                 <div className="stat-card orange">
                     <div className="stat-icon-emoji">💰</div>
                     <div className="stat-info-home">
-                        <span className="stat-value-home">₹0</span>
+                        <span className="stat-value-home">₹{loading ? '...' : pendingDues.toLocaleString()}</span>
                         <span className="stat-label-home">Pending Dues</span>
                     </div>
                 </div>

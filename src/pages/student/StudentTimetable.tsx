@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentByUserId, getSchedulesByStudent } from '../../services/api';
+import { getMyStudentSchedules } from '../../services/api';
 import type { Schedule } from '../../types';
 import PageContainer from '../../components/PageContainer';
 
@@ -19,14 +19,14 @@ export default function StudentTimetable() {
     const { user } = useAuth();
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [selectedDay, setSelectedDay] = useState('ALL');
 
     useEffect(() => {
         if (!user) return;
-        getStudentByUserId(user.id)
-            .then(s => getSchedulesByStudent(s.id))
+        getMyStudentSchedules()
             .then(data => { setSchedules(data); setLoading(false); })
-            .catch(() => setLoading(false));
+            .catch(() => { setError('Unable to load your timetable.'); setLoading(false); });
     }, [user]);
 
     const grouped = dayOrder.reduce<Record<string, Schedule[]>>((acc, day) => {
@@ -79,6 +79,8 @@ export default function StudentTimetable() {
 
             {loading ? (
                 <div style={{ padding: 48, textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading timetable...</div>
+            ) : error ? (
+                <div style={{ padding: 48, textAlign: 'center', color: '#ef4444' }}>{error}</div>
             ) : daysToShow.length === 0 ? (
                 <div style={{ padding: 48, textAlign: 'center', color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.03)', borderRadius: 14, border: '1px solid rgba(255,255,255,0.06)' }}>
                     No classes scheduled{selectedDay !== 'ALL' ? ` on ${dayLabels[selectedDay]}` : ''}

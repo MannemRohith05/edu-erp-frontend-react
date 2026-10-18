@@ -9,9 +9,9 @@ interface AuthContextType {
     isAuthenticated: boolean;
     loading: boolean;
     login: (credentials: LoginRequest) => Promise<LoginOtpResponse>;
-    demoLogin: (user: User) => void;
     verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
-    register: (data: RegisterRequest) => Promise<void>;
+    register: (data: RegisterRequest) => Promise<LoginOtpResponse>;
+    verifyRegistration: (data: VerifyOtpRequest) => Promise<AuthResponse>;
     logout: () => void;
     getToken: () => string | null;
     hasRole: (role: string) => boolean;
@@ -55,24 +55,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return res.data;
     };
 
-    const demoLogin = (demoUser: User) => {
-        handleAuthSuccess({
-            accessToken: `demo-token-${demoUser.role.toLowerCase()}`,
-            refreshToken: `demo-refresh-${demoUser.role.toLowerCase()}`,
-            tokenType: 'Bearer',
-            expiresIn: 86400000,
-            user: demoUser,
-        });
-    };
-
     const verifyOtp = async (data: VerifyOtpRequest) => {
         const res = await axios.post<AuthResponse>(`${API_URL}/auth/verify-otp`, data);
         handleAuthSuccess(res.data);
     };
 
     const register = async (data: RegisterRequest) => {
-        const res = await axios.post<AuthResponse>(`${API_URL}/auth/register`, data);
+        const res = await axios.post<LoginOtpResponse>(`${API_URL}/auth/register`, data);
+        return res.data;
+    };
+
+    const verifyRegistration = async (data: VerifyOtpRequest) => {
+        const res = await axios.post<AuthResponse>(`${API_URL}/auth/verify-registration`, data);
         handleAuthSuccess(res.data);
+        return res.data;
     };
 
     const logout = () => {
@@ -90,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const hasAnyRole = (roles: string[]) => user ? roles.includes(user.role) : false;
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, demoLogin, verifyOtp, register, logout, getToken, hasRole, hasAnyRole }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, verifyOtp, register, verifyRegistration, logout, getToken, hasRole, hasAnyRole }}>
             {children}
         </AuthContext.Provider>
     );

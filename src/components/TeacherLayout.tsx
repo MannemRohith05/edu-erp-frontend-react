@@ -7,8 +7,10 @@ const navItems = [
     { label: 'Dashboard', icon: '📊', path: '/teacher' },
     { label: 'My Courses', icon: '📚', path: '/teacher/courses' },
     { label: 'Attendance', icon: '📋', path: '/teacher/attendance' },
+    { label: 'Students', icon: '🎓', path: '/teacher/students' },
     { label: 'My Timetable', icon: '📅', path: '/teacher/timetable' },
     { label: 'Certifications', icon: '🏆', path: '/teacher/certifications' },
+    { label: 'My Salary & Payments', icon: '💼', path: '/teacher/payroll' },
 ];
 
 export default function TeacherLayout() {

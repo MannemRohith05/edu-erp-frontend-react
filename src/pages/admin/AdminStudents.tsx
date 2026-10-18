@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { getStudents, getCoursesByStudent, getAttendanceByStudent, getGradesByStudent } from '../../services/api';
 import type { Student, Course, Attendance, Grade } from '../../types';
 
 export default function AdminStudents() {
+    const { user } = useAuth();
+    const isTeacher = user?.role === 'TEACHER';
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -78,8 +81,8 @@ export default function AdminStudents() {
     return (
         <div>
             <div className="admin-page-header">
-                <h1>Student Management</h1>
-                <p>View and manage all registered students — click a student to see full details</p>
+                <h1>{isTeacher ? 'Student Academic Directory' : 'Student Management'}</h1>
+                <p>{isTeacher ? 'View registered students and their academic details' : 'View and manage all registered students — click a student to see full details'}</p>
             </div>
 
             <div className="admin-stats-row">

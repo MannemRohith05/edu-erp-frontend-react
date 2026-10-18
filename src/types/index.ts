@@ -35,7 +35,9 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
-  role?: 'ADMIN' | 'TEACHER' | 'STUDENT' | 'ADMINISTRATOR';
+  role: 'TEACHER' | 'STUDENT';
+  employeeId?: string;
+  department?: string;
 }
 
 export interface Student {
@@ -147,3 +149,41 @@ export interface DashboardStats {
   totalAdmins: number;
   totalAdministrators: number;
 }
+
+export interface FeeStructure {
+  id: number;
+  category: string;
+  amount: number;
+  dueDate: string;
+  semester?: number;
+  academicYear?: string;
+  courseId?: number;
+  allowPartial?: boolean;
+}
+
+export interface FeeLedgerEntry {
+  invoiceId: number;
+  studentId: number;
+  studentName: string;
+  category: string;
+  amount: number;
+  adjustment: number;
+  paid: number;
+  balance: number;
+  dueDate: string;
+  adjustmentReason?: string;
+  payments: { amount: number; reference: string; paidAt: string; notes?: string }[];
+  status?: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+}
+
+export interface AcademicSummary {
+  cgpa: number;
+  sgpaBySemester: Record<string, number>;
+  eligibleCredits: number;
+}
+
+export type CertificateStatus = 'ISSUED' | 'REVOKED';
+export interface Certificate { id: number; verificationRef: string; studentId: number; studentName: string; courseId?: number; courseName?: string; certificateType: string; title: string; issueDate: string; status: CertificateStatus; issuedByName: string; issuedAt: string; notes?: string; }
+export interface SalaryStructure { id: number; teacherId: number; teacherName: string; grossSalary: number; allowances: number; deductions: number; paymentFrequency: string; effectiveDate: string; }
+export type PayrollStatus = 'PENDING' | 'PROCESSING' | 'CREDITED' | 'FAILED';
+export interface PayrollRecord { id: number; teacherId: number; teacherName: string; payrollYear: number; payrollMonth: number; grossSalary: number; allowances: number; deductions: number; netSalary: number; status: PayrollStatus; paymentDate?: string; paymentReference?: string; payslipReference?: string; }

@@ -10,12 +10,16 @@ const navItems = [
     { label: 'Teachers', icon: '👨‍🏫', path: '/admin/teachers' },
     { label: 'Courses', icon: '📚', path: '/admin/courses' },
     { label: 'Schedules', icon: '📅', path: '/admin/schedules' },
+    { label: 'Fees', icon: '💳', path: '/admin/fees' },
+    { label: 'Certificates', icon: '📜', path: '/admin/certificates' },
+    { label: 'Payroll', icon: '💼', path: '/admin/payroll' },
 ];
 
 export default function AdminLayout() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
+    const basePath = user?.role === 'ADMINISTRATOR' ? '/administrator' : '/admin';
 
     const handleLogout = () => { logout(); navigate('/login'); };
 
@@ -40,7 +44,7 @@ export default function AdminLayout() {
                     {navItems.map((item) => (
                         <NavLink
                             key={item.path}
-                            to={item.path}
+                            to={item.path.replace('/admin', basePath)}
                             end={item.path === '/admin'}
                             className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}
                         >

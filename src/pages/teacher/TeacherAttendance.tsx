@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getTeacherByUserId, getCoursesByTeacher, getAttendanceByCourse, getStudentsByCourse, markBulkAttendance } from '../../services/api';
+import { getMyCourses, getAttendanceByCourse, getStudentsByCourse, markBulkAttendance } from '../../services/api';
 import type { Course, Attendance } from '../../types';
 
 type AttendanceEntry = { studentId: number; studentName: string; studentCode: string; status: 'PRESENT' | 'ABSENT' | 'LATE' };
@@ -21,8 +21,7 @@ export default function TeacherAttendance() {
 
     useEffect(() => {
         if (!user) return;
-        getTeacherByUserId(user.id)
-            .then(teacher => getCoursesByTeacher(teacher.id))
+        getMyCourses()
             .then(c => { setCourses(c); setLoading(false); })
             .catch(() => setLoading(false));
     }, [user]);
