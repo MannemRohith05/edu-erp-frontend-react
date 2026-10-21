@@ -6,6 +6,7 @@ import './AdminLayout.css';
 const navItems = [
     { label: 'Dashboard', icon: '📊', path: '/teacher' },
     { label: 'My Courses', icon: '📚', path: '/teacher/courses' },
+    { label: 'Marks Management', icon: '📊', path: '/teacher/marks' },
     { label: 'Attendance', icon: '📋', path: '/teacher/attendance' },
     { label: 'Students', icon: '🎓', path: '/teacher/students' },
     { label: 'My Timetable', icon: '📅', path: '/teacher/timetable' },

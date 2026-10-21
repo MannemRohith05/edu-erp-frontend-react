@@ -1,0 +1,82 @@
+.student-fees-page {
+    --student-blue: #60a5fa;
+    --student-green: #4ade80;
+    --student-amber: #fbbf24;
+    --student-red: #f87171;
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.student-fee-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.student-fee-summary-card {
+    min-width: 0;
+    padding: 18px 19px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.student-fee-summary-card.is-total { border-top: 3px solid var(--student-blue); }
+.student-fee-summary-card.is-paid { border-top: 3px solid var(--student-green); }
+.student-fee-summary-card.is-due { border-top: 3px solid var(--student-red); }
+.student-fee-summary-card.is-completion { border-top: 3px solid var(--student-amber); }
+.student-fee-summary-label { color: rgba(255, 255, 255, 0.58); font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.student-fee-summary-value { display: block; margin-top: 9px; color: #fff; font-size: clamp(1.2rem, 2vw, 1.55rem); font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+.is-total .student-fee-summary-value { color: var(--student-blue); }
+.is-paid .student-fee-summary-value { color: var(--student-green); }
+.is-due .student-fee-summary-value { color: var(--student-red); }
+.is-completion .student-fee-summary-value { color: var(--student-amber); }
+
+.student-fee-progress {
+    height: 6px;
+    margin-top: 13px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+}
+.student-fee-progress span { display: block; height: 100%; border-radius: inherit; background: var(--student-amber); transition: width 180ms ease; }
+
+.student-fee-alert { margin-bottom: 16px; padding: 12px 14px; border-radius: 9px; font-size: 0.84rem; }
+.student-fee-alert.is-success { border: 1px solid rgba(74, 222, 128, 0.25); background: rgba(74, 222, 128, 0.08); color: var(--student-green); }
+.student-fee-alert.is-error { border: 1px solid rgba(248, 113, 113, 0.28); background: rgba(248, 113, 113, 0.08); color: #fecaca; }
+.student-fee-state { padding: 48px 20px; color: rgba(255, 255, 255, 0.56); text-align: center; }
+.student-payment-panel { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 20px; padding: 20px; border: 1px solid rgba(96, 165, 250, 0.22); border-radius: 14px; background: rgba(96, 165, 250, 0.06); }
+.student-payment-panel h2 { margin: 0 0 8px; color: #fff; font-size: 1.05rem; }
+.student-payment-panel p { margin: 0; color: rgba(255,255,255,.62); font-size: .84rem; }
+.student-payment-fields { display: flex; align-items: end; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.student-payment-fields label { display: grid; gap: 5px; color: rgba(255,255,255,.64); font-size: .72rem; font-weight: 600; }
+.student-payment-fields input { width: 170px; padding: 10px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: rgba(0,0,0,.18); color: #fff; font: inherit; }
+.student-payment-fields input:focus { outline: 2px solid rgba(96,165,250,.55); outline-offset: 1px; }
+
+.student-fee-table-wrap { overflow-x: auto; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 13px; }
+.student-fee-table { width: 100%; min-width: 850px; border-collapse: collapse; text-align: left; }
+.student-fee-table th { padding: 12px 18px; background: rgba(0, 0, 0, 0.16); color: rgba(255, 255, 255, 0.55); font-size: 0.7rem; font-weight: 650; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.student-fee-table td { padding: 15px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.055); color: rgba(255, 255, 255, 0.68); font-size: 0.84rem; vertical-align: middle; }
+.student-fee-table tbody tr:last-child td { border-bottom: 0; }
+.student-fee-table tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+.student-fee-table td:first-child, .student-fee-table td:nth-child(2) { color: #fff; font-weight: 550; }
+.student-fee-money { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.student-fee-money.is-paid { color: var(--student-green); }
+.student-fee-money.is-due { color: var(--student-amber); }
+.student-fee-status { display: inline-flex; align-items: center; padding: 5px 9px; border: 1px solid transparent; border-radius: 999px; font-size: 0.72rem; font-weight: 650; white-space: nowrap; }
+.student-fee-status.is-paid { border-color: rgba(74, 222, 128, 0.28); background: rgba(74, 222, 128, 0.1); color: var(--student-green); }
+.student-fee-status.is-partial { border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); color: var(--student-amber); }
+.student-fee-status.is-pending, .student-fee-status.is-overdue { border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.1); color: #fca5a5; }
+.student-fee-actions { display: flex; align-items: center; gap: 8px; min-width: 180px; }
+.student-fee-button { min-height: 36px; padding: 8px 12px; border: 1px solid transparent; border-radius: 8px; font: inherit; font-size: 0.76rem; font-weight: 650; cursor: pointer; transition: background 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.student-fee-button:disabled { cursor: wait; opacity: 0.65; }
+.student-fee-button.is-primary { background: #4f46e5; color: #fff; }
+.student-fee-button.is-primary:hover:not(:disabled) { background: #6366f1; transform: translateY(-1px); }
+.student-fee-button.is-secondary { border-color: rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.82); }
+.student-fee-button.is-secondary:hover { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1); }
+
+@media (max-width: 900px) { .student-fee-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .student-payment-panel { display: block; } .student-payment-fields { justify-content: flex-start; margin-top: 16px; } }
+@media (max-width: 520px) { .student-fee-summary { grid-template-columns: 1fr; } .student-fee-summary-card { padding: 16px; } }
+@media (prefers-reduced-motion: reduce) { .student-fee-progress span, .student-fee-button { transition: none; } }

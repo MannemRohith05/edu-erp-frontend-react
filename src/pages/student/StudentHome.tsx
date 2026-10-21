@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getStudentByUserId, getCoursesByStudent, getAttendanceByStudent, getMyAcademicSummary, getMyFeeLedger } from '../../services/api';
 import type { Course, Attendance } from '../../types';
@@ -75,12 +76,13 @@ export default function StudentHome() {
             <div className="quick-links">
                 <h3>Quick Access</h3>
                 <div className="links-grid">
-                    <a className="quick-link" href="/student/courses/assignments"><span className="link-icon">📝</span><span>Assignments</span></a>
-                    <a className="quick-link" href="/student/exam/results"><span className="link-icon">📋</span><span>Results</span></a>
-                    <a className="quick-link" href="/student/fees/payments"><span className="link-icon">💳</span><span>Fee Payment</span></a>
-                    <a className="quick-link" href="/student/timetable"><span className="link-icon">📅</span><span>Timetable</span></a>
-                    <a className="quick-link" href="/student/attendance"><span className="link-icon">✅</span><span>Attendance</span></a>
-                    <a className="quick-link" href="/student/profile/view"><span className="link-icon">👤</span><span>Profile</span></a>
+                    <Link className="quick-link" to="/student/courses/assignments"><span className="link-icon">📝</span><span>Assignments</span></Link>
+                    <Link className="quick-link" to="/student/exam/results"><span className="link-icon">📋</span><span>Results</span></Link>
+                    <Link className="quick-link" to="/student/fees/payments"><span className="link-icon">💳</span><span>Fee Payment</span></Link>
+                    <Link className="quick-link" to="/student/timetable"><span className="link-icon">📅</span><span>Timetable</span></Link>
+                    <Link className="quick-link" to="/student/attendance"><span className="link-icon">✅</span><span>Attendance</span></Link>
+                    <Link className="quick-link" to="/student/profile/view"><span className="link-icon">👤</span><span>Profile</span></Link>
+                    <Link className="quick-link" to="/student/certificates"><span className="link-icon">📜</span><span>Certificates</span></Link>
                 </div>
             </div>
 

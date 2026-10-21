@@ -6,6 +6,24 @@
     flex-direction: column;
     transition: width 0.3s ease;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
+    .sidebar {
+        width: 68px;
+    }
+
+    .sidebar .logo-text,
+    .sidebar .user-badge,
+    .sidebar .label,
+    .sidebar .arrow,
+    .sidebar .submenu,
+    .sidebar .sidebar-footer {
+        display: none;
+    }
+
+    .sidebar-header { padding: 16px 12px; }
+    .sidebar-header .toggle-btn { display: none; }
+    .menu { padding: 12px 8px; }
+    .menu-item { justify-content: center; padding: 11px 8px; }
+    .menu-item .icon { min-width: 24px; }
 }
 
 .sidebar.collapsed {
@@ -95,6 +113,10 @@
     cursor: pointer;
     transition: all 0.2s;
     margin-bottom: 2px;
+    border: 0;
+    width: 100%;
+    text-align: left;
+    font: inherit;
 }
 
 .menu-item:hover {

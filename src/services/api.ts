@@ -1,11 +1,36 @@
-import axios from 'axios';
-import type { User, Student, Teacher, Course, Attendance, Grade, Schedule, Message, DashboardStats, FeeStructure, FeeLedgerEntry, AcademicSummary, Certificate, SalaryStructure, PayrollRecord, PayrollStatus } from '../types';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
+import type { User, Student, Teacher, Course, Attendance, Grade, Schedule, Message, DashboardStats, FeeStructure, FeeLedgerEntry, FinanceDashboard, AcademicSummary, Certificate, SalaryStructure, PayrollRecord, PayrollStatus, Assessment, AuthResponse } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
     baseURL: API_URL,
 });
+
+type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
+let refreshInFlight: Promise<string> | null = null;
+
+const clearStoredSession = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+};
+
+const refreshAccessToken = async (): Promise<string> => {
+    if (!refreshInFlight) {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) return Promise.reject(new Error('No refresh token is available'));
+        refreshInFlight = axios.post<AuthResponse>(`${API_URL}/auth/refresh`, null, {
+            headers: { Authorization: `Bearer ${refreshToken}` },
+        }).then(response => {
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            return response.data.accessToken;
+        }).finally(() => { refreshInFlight = null; });
+    }
+    return refreshInFlight;
+};
 
 // Auth interceptor
 api.interceptors.request.use((config) => {
@@ -18,11 +43,22 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
+        const request = error.config as RetriableRequest | undefined;
+        const isRefreshRequest = request?.url?.includes('/auth/refresh');
+        if (error.response?.status === 401 && request && !request._retry && !isRefreshRequest) {
+            request._retry = true;
+            try {
+                const accessToken = await refreshAccessToken();
+                request.headers.Authorization = `Bearer ${accessToken}`;
+                return api(request);
+            } catch {
+                clearStoredSession();
+                window.location.href = '/login';
+            }
+        }
         if (error.response?.status === 401) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
+            clearStoredSession();
             window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -105,11 +141,17 @@ export const getGradeReport = () => api.get('/reports/grades').then(r => r.data)
 export const getMyFeeStructures = () => api.get<FeeStructure[]>('/fees/me/structures').then(r => r.data);
 export const getMyFeeLedger = () => api.get<FeeLedgerEntry[]>('/fees/me/ledger').then(r => r.data);
 export const initiateMyFeePayment = (invoiceId: number, amount: number, idempotencyKey: string) => api.post<FeeLedgerEntry>('/fees/me/payments/initiate', null, { params: { invoiceId, amount }, headers: { 'Idempotency-Key': idempotencyKey } }).then(r => r.data);
+export const confirmMyFeePayment = (orderId: string, paymentId: string, signature: string) => api.post<FeeLedgerEntry>('/fees/me/payments/confirm', null, { params: { orderId, paymentId, signature } }).then(r => r.data);
+export const reconcileMyFeePayment = (orderId: string) => api.post<FeeLedgerEntry>('/fees/me/payments/reconcile', null, { params: { orderId } }).then(r => r.data);
+export const reconcileFeePayment = (orderId: string) => api.post<FeeLedgerEntry>('/fees/payments/reconcile', null, { params: { orderId } }).then(r => r.data);
+export const downloadMyFeeReceipt = (paymentId: string) => api.get(`/fees/me/payments/${encodeURIComponent(paymentId)}/receipt`, { responseType: 'blob' }).then(r => r.data);
+export const downloadMyFeeReceiptPdf = (paymentId: string) => api.get(`/fees/me/payments/${encodeURIComponent(paymentId)}/receipt.pdf`, { responseType: 'blob' }).then(r => r.data);
 export const getMyAcademicSummary = () => api.get<AcademicSummary>('/grades/me/summary').then(r => r.data);
 export const getFeeStructures = () => api.get<FeeStructure[]>('/fees/structures').then(r => r.data);
 export const createFeeStructure = (value: Partial<FeeStructure>) => api.post<FeeStructure>('/fees/structures', value).then(r => r.data);
 export const getFeeInvoices = () => api.get<FeeLedgerEntry[]>('/fees/invoices').then(r => r.data);
-export const createFeeInvoice = (studentId: number, structureId: number, amount: number) => api.post<FeeLedgerEntry>('/fees/invoices', null, { params: { studentId, structureId, amount } }).then(r => r.data);
+export const getFinanceDashboard = () => api.get<FinanceDashboard>('/fees/dashboard').then(r => r.data);
+export const createFeeInvoice = (studentId: number, structureId: number) => api.post<FeeLedgerEntry>('/fees/invoices', null, { params: { studentId, structureId } }).then(r => r.data);
 export const recordFeePayment = (invoiceId: number, amount: number, reference: string, notes?: string) => api.post<FeeLedgerEntry>(`/fees/invoices/${invoiceId}/payments`, null, { params: { amount, reference, notes } }).then(r => r.data);
 export const getCertificates = () => api.get<Certificate[]>('/certificates').then(r => r.data);
 export const issueCertificate = (value: Partial<Certificate>) => api.post<Certificate>('/certificates', value).then(r => r.data);
@@ -120,8 +162,17 @@ export const getSalaryStructures = () => api.get<SalaryStructure[]>('/payroll/st
 export const configureSalary = (value: Partial<SalaryStructure>) => api.post<SalaryStructure>('/payroll/structures', value).then(r => r.data);
 export const getMySalaryStructures = () => api.get<SalaryStructure[]>('/payroll/structures/me').then(r => r.data);
 export const getPayrollRecords = () => api.get<PayrollRecord[]>('/payroll/records').then(r => r.data);
+export const getPayrollDashboard = () => api.get('/payroll/dashboard').then(r => r.data);
 export const generatePayroll = (teacherId: number, year: number, month: number) => api.post<PayrollRecord>('/payroll/records/generate', null, { params: { teacherId, year, month } }).then(r => r.data);
 export const updatePayroll = (id: number, status: PayrollStatus, paymentDate?: string, paymentReference?: string, payslipReference?: string) => api.put<PayrollRecord>(`/payroll/records/${id}`, { status, paymentDate, paymentReference, payslipReference }).then(r => r.data);
 export const getMyPayrollRecords = () => api.get<PayrollRecord[]>('/payroll/records/me').then(r => r.data);
+export const approvePayroll = (id: number) => api.post<PayrollRecord>(`/payroll/records/${id}/approve`).then(r => r.data);
+export const payPayroll = (id: number, paymentMethod: string, paymentReference: string, paymentDate: string, paymentNotes?: string) => api.post<PayrollRecord>(`/payroll/records/${id}/pay`, { paymentMethod, paymentReference, paymentDate, paymentNotes }).then(r => r.data);
+export const downloadPayrollPayslip = (id: number) => api.get(`/payroll/records/${id}/payslip`, { responseType: 'blob' }).then(r => r.data);
+export const getAssessmentsByCourse = (courseId: number) => api.get<Assessment[]>(`/assessments/course/${courseId}`).then(r => r.data);
+export const createAssessment = (value: Partial<Assessment>) => api.post<Assessment>('/assessments', value).then(r => r.data);
+export const submitAssessment = (id: number) => api.post<Assessment>(`/assessments/${id}/submit`).then(r => r.data);
+export const approveAssessment = (id: number) => api.post<Assessment>(`/assessments/${id}/approve`).then(r => r.data);
+export const publishAssessment = (id: number) => api.post<Assessment>(`/assessments/${id}/publish`).then(r => r.data);
 
 export default api;

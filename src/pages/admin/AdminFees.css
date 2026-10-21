@@ -1,0 +1,244 @@
+.admin-fees-page {
+    --fee-blue: #60a5fa;
+    --fee-purple: #a78bfa;
+    --fee-green: #4ade80;
+    --fee-amber: #fbbf24;
+    --fee-red: #f87171;
+    --fee-surface: rgba(255, 255, 255, 0.045);
+    --fee-border: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.admin-fee-summary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.admin-fee-summary-card,
+.admin-fee-panel,
+.admin-fee-table-card {
+    background: var(--fee-surface);
+    border: 1px solid var(--fee-border);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.admin-fee-summary-card {
+    min-width: 0;
+    padding: 18px 19px;
+    border-top: 3px solid var(--fee-blue);
+}
+
+.admin-fee-summary-card.is-blue { border-top-color: var(--fee-blue); }
+.admin-fee-summary-card.is-purple { border-top-color: var(--fee-purple); }
+.admin-fee-summary-card.is-green { border-top-color: var(--fee-green); }
+.admin-fee-summary-card.is-amber { border-top-color: var(--fee-amber); }
+.admin-fee-summary-card.is-red { border-top-color: var(--fee-red); }
+
+.admin-fee-summary-label {
+    min-height: 36px;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.035em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.admin-fee-summary-value {
+    display: block;
+    margin-top: 8px;
+    color: #fff;
+    font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.admin-fees-page .is-blue .admin-fee-summary-value { color: var(--fee-blue); }
+.admin-fees-page .is-purple .admin-fee-summary-value { color: var(--fee-purple); }
+.admin-fees-page .is-green .admin-fee-summary-value { color: var(--fee-green); }
+.admin-fees-page .is-amber .admin-fee-summary-value { color: var(--fee-amber); }
+.admin-fees-page .is-red .admin-fee-summary-value { color: var(--fee-red); }
+
+.admin-fee-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.admin-fee-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 22px;
+}
+
+.admin-fee-panel h3,
+.admin-fee-table-title {
+    margin: 0;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.admin-fee-panel p {
+    margin: -7px 0 2px;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.admin-fee-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.admin-fee-field label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.admin-fee-assigned-amount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 52px;
+    padding: 11px 13px;
+    border: 1px dashed rgba(255, 255, 255, 0.16);
+    border-radius: 9px;
+    background: rgba(10, 10, 20, 0.28);
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.8rem;
+}
+
+.admin-fee-assigned-amount strong {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.admin-fee-assigned-amount.is-selected { border-style: solid; border-color: rgba(74, 222, 128, 0.28); background: rgba(74, 222, 128, 0.06); color: rgba(255, 255, 255, 0.72); }
+.admin-fee-assigned-amount.is-selected strong { color: var(--fee-green); }
+
+.admin-fee-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 9px;
+    background: rgba(10, 10, 20, 0.48);
+    color: #fff;
+    font: inherit;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.admin-fee-input:hover { border-color: rgba(255, 255, 255, 0.25); }
+.admin-fee-input:focus {
+    border-color: #818cf8;
+    background: rgba(10, 10, 20, 0.7);
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
+    outline: none;
+}
+
+.admin-fee-primary-button,
+.admin-fee-action-button {
+    min-height: 42px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    padding: 10px 15px;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.admin-fee-primary-button {
+    margin-top: 2px;
+    background: #6366f1;
+    color: #fff;
+}
+
+.admin-fee-primary-button:hover { background: #818cf8; transform: translateY(-1px); }
+.admin-fee-primary-button:active { transform: translateY(0); }
+.admin-fee-primary-button:disabled { cursor: not-allowed; opacity: 0.48; transform: none; }
+
+.admin-fee-action-button {
+    border-color: rgba(96, 165, 250, 0.35);
+    background: rgba(96, 165, 250, 0.1);
+    color: var(--fee-blue);
+    white-space: nowrap;
+}
+
+.admin-fee-action-button:hover { background: rgba(96, 165, 250, 0.18); border-color: var(--fee-blue); }
+
+.admin-fee-table-card { overflow: hidden; margin-top: 18px; }
+.admin-fee-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 19px 21px;
+    border-bottom: 1px solid var(--fee-border);
+}
+
+.admin-fee-table-scroll { overflow-x: auto; }
+.admin-fee-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-fee-table th {
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.16);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.7rem;
+    font-weight: 650;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.admin-fee-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.84rem;
+}
+
+.admin-fee-table tbody tr:last-child td { border-bottom: 0; }
+.admin-fee-table tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+.admin-fee-table td:first-child { color: #fff; font-weight: 550; }
+.admin-fee-money { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.admin-fee-money.is-paid { color: var(--fee-green); }
+.admin-fee-money.is-pending { color: var(--fee-amber); }
+.admin-fee-money.is-overdue { color: var(--fee-red); }
+.admin-fee-empty { padding: 28px 20px; color: rgba(255, 255, 255, 0.52); text-align: center; }
+
+@media (max-width: 1100px) {
+    .admin-fee-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .admin-fee-summary,
+    .admin-fee-form-grid { grid-template-columns: 1fr; }
+    .admin-fee-summary-card { padding: 16px; }
+    .admin-fee-summary-label { min-height: auto; }
+    .admin-fee-panel { padding: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-fee-input,
+    .admin-fee-primary-button,
+    .admin-fee-action-button { transition: none; }
+}

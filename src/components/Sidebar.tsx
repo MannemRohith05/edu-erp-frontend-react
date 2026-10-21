@@ -111,11 +111,11 @@ export default function Sidebar({ userId, isCollapsed, searchQuery, onLogout, on
                     if (item.children && item.children.length > 0) {
                         return (
                             <div key={item.label} className={`menu-group ${expandedItems[item.label] ? 'expanded' : ''}`}>
-                                <div className="menu-item parent" onClick={() => toggleExpand(item.label)}>
+                                <button type="button" className="menu-item parent" onClick={() => toggleExpand(item.label)}>
                                     <span className="icon">{item.icon}</span>
                                     {!isCollapsed && <span className="label">{item.label}</span>}
                                     {!isCollapsed && <span className="arrow">{expandedItems[item.label] ? '▼' : '›'}</span>}
-                                </div>
+                                </button>
                                 {expandedItems[item.label] && !isCollapsed && (
                                     <div className="submenu">
                                         {item.children.map((child) => (

@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useAuth } from '../context/AuthContext';
+import './StudentLayout.css';
 
 export default function StudentLayout() {
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -14,7 +16,7 @@ export default function StudentLayout() {
 
     const handleLogout = () => {
         logout();
-        window.location.href = '/login';
+        navigate('/login');
     };
 
     const handleSearchKeyDown = (e: React.KeyboardEvent) => {
@@ -25,7 +27,7 @@ export default function StudentLayout() {
     };
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#0f0f1a' }}>
+        <div className="student-layout">
             <Sidebar
                 userId={userId}
                 isCollapsed={sidebarCollapsed}
@@ -33,76 +35,27 @@ export default function StudentLayout() {
                 onLogout={handleLogout}
                 onToggle={setSidebarCollapsed}
             />
-            <main style={{ flex: 1, transition: 'margin-left 0.3s ease', display: 'flex', flexDirection: 'column' }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '16px 32px',
-                    background: 'rgba(255,255,255,0.02)',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 12,
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: 12,
-                        padding: '10px 16px',
-                        minWidth: 300,
-                    }}>
-                        <span style={{ fontSize: 14 }}>🔍</span>
+            <main className="student-main">
+                <header className="student-topbar">
+                    <div className="student-search">
+                        <span aria-hidden="true">🔍</span>
                         <input
+                            aria-label="Search student menu"
                             type="text"
                             placeholder="Search menu... (Enter to go)"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleSearchKeyDown}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: '#fff',
-                                fontSize: '0.875rem',
-                                width: '100%',
-                                outline: 'none',
-                            }}
                         />
                         {searchQuery && (
-                            <button
-                                onClick={() => setSearchQuery('')}
-                                style={{
-                                    background: 'rgba(255,255,255,0.1)',
-                                    border: 'none',
-                                    color: 'rgba(255,255,255,0.6)',
-                                    width: 20,
-                                    height: 20,
-                                    borderRadius: '50%',
-                                    cursor: 'pointer',
-                                    fontSize: 14,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >×</button>
+                            <button className="student-search-clear" aria-label="Clear menu search" onClick={() => setSearchQuery('')}>×</button>
                         )}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>Welcome, {userName}</span>
-                        <span style={{
-                            width: 40,
-                            height: 40,
-                            background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#fff',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                        }}>{userInitials}</span>
+                    <div className="student-user">
+                        <span>Welcome, {userName}</span>
+                        <span className="student-avatar">{userInitials}</span>
                     </div>
-                </div>
+                </header>
                 <Outlet />
             </main>
         </div>

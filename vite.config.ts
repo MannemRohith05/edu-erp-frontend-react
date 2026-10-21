@@ -6,6 +6,13 @@ export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
   server: {
     port: 5173,
+    strictPort: true,
+    watch: {
+      // OneDrive can delay native filesystem notifications. The launcher enables
+      // polling for local development; normal Vite HMR remains unchanged.
+      usePolling: process.env.VITE_USE_POLLING === 'true',
+      interval: 300,
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8080',

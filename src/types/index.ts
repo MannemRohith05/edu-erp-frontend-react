@@ -100,6 +100,7 @@ export interface Attendance {
 
 export interface Grade {
   id: number;
+  assessmentId?: number;
   studentId: number;
   studentName: string;
   studentCode: string;
@@ -112,6 +113,8 @@ export interface Grade {
   gradeType: string;
   letterGrade: string;
   feedback: string;
+  published?: boolean;
+  workflowStatus?: string;
   gradedAt: string;
 }
 
@@ -161,7 +164,7 @@ export interface FeeStructure {
   allowPartial?: boolean;
 }
 
-export interface FeeLedgerEntry {
+  export interface FeeLedgerEntry {
   invoiceId: number;
   studentId: number;
   studentName: string;
@@ -172,9 +175,24 @@ export interface FeeLedgerEntry {
   balance: number;
   dueDate: string;
   adjustmentReason?: string;
-  payments: { amount: number; reference: string; paidAt: string; notes?: string }[];
+  payments: { amount: number; reference: string; paidAt: string; notes?: string; status?: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED' }[];
   status?: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
-}
+  provider?: string;
+  providerOrderId?: string;
+  providerPaymentId?: string;
+  providerKeyId?: string;
+  providerAmount?: number;
+  providerCurrency?: string;
+  }
+
+  export interface FinanceDashboard {
+    totalFeesAssigned: number;
+    studentsAssessed: number;
+    totalAmountReceived: number;
+    pendingBalance: number;
+    overdueBalance: number;
+    students: { studentId: number; studentName: string; assessed: number; paid: number; pending: number; overdue: number }[];
+  }
 
 export interface AcademicSummary {
   cgpa: number;
@@ -184,6 +202,8 @@ export interface AcademicSummary {
 
 export type CertificateStatus = 'ISSUED' | 'REVOKED';
 export interface Certificate { id: number; verificationRef: string; studentId: number; studentName: string; courseId?: number; courseName?: string; certificateType: string; title: string; issueDate: string; status: CertificateStatus; issuedByName: string; issuedAt: string; notes?: string; }
-export interface SalaryStructure { id: number; teacherId: number; teacherName: string; grossSalary: number; allowances: number; deductions: number; paymentFrequency: string; effectiveDate: string; }
-export type PayrollStatus = 'PENDING' | 'PROCESSING' | 'CREDITED' | 'FAILED';
-export interface PayrollRecord { id: number; teacherId: number; teacherName: string; payrollYear: number; payrollMonth: number; grossSalary: number; allowances: number; deductions: number; netSalary: number; status: PayrollStatus; paymentDate?: string; paymentReference?: string; payslipReference?: string; }
+export interface SalaryStructure { id: number; teacherId: number; teacherName: string; basicSalary: number; grossSalary: number; allowances: number; bonuses: number; deductions: number; paymentFrequency: string; effectiveDate: string; }
+export type PayrollStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'PROCESSING' | 'PAID' | 'CREDITED' | 'FAILED' | 'CANCELLED';
+export interface PayrollDashboard { totalGrossSalary: number; totalDeductions: number; totalNetSalary: number; salaryPaid: number; salaryPayable: number; teachers: { teacherId: number; teacherName: string; grossSalary: number; deductions: number; netSalary: number; status: PayrollStatus }[]; }
+export interface PayrollRecord { id: number; teacherId: number; teacherName: string; payrollYear: number; payrollMonth: number; basicSalary: number; grossSalary: number; allowances: number; bonuses: number; deductions: number; netSalary: number; status: PayrollStatus; paymentDate?: string; paymentReference?: string; paymentMethod?: string; paymentNotes?: string; payslipReference?: string; }
+export interface Assessment { id: number; courseId: number; courseName?: string; title: string; assessmentType?: string; academicYear?: string; semester?: number; deadline?: string; maxMarks: number; weightage: number; status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'PUBLISHED'; submittedAt?: string; approvedAt?: string; }

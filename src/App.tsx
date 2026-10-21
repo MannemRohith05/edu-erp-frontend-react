@@ -24,6 +24,8 @@ import TeacherCourses from './pages/teacher/TeacherCourses';
 import TeacherAttendance from './pages/teacher/TeacherAttendance';
 import TeacherTimetable from './pages/teacher/TeacherTimetable';
 import TeacherPayroll from './pages/teacher/TeacherPayroll';
+import TeacherMarks from './pages/teacher/TeacherMarks';
+import TeacherCertifications from './pages/teacher/TeacherCertifications';
 
 // Student pages — FUNCTIONAL
 import StudentHome from './pages/student/StudentHome';
@@ -83,6 +85,8 @@ function App() {
             <Route path="students" element={<AdminStudents />} />
             <Route path="timetable" element={<TeacherTimetable />} />
             <Route path="payroll" element={<TeacherPayroll />} />
+            <Route path="marks" element={<TeacherMarks />} />
+            <Route path="certifications" element={<TeacherCertifications />} />
           </Route>
 
           {/* Student routes with layout */}
