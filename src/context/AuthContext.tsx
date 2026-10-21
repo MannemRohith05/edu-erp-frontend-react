@@ -15,12 +15,14 @@ import type {
     VerifyOtpRequest,
 } from '../types';
 
-// Connect to the deployed Render backend.
+// Base URL of the deployed backend.
 const API_URL = (
     import.meta.env.VITE_API_BASE_URL ||
     import.meta.env.VITE_API_URL ||
-    '/api'
-).replace(/\/+$/, '');
+    'https://edu-erp-backend-hedc.onrender.com'
+)
+    .replace(/\/+$/, '')
+    .replace(/\/api$/, '');
 
 interface AuthContextType {
     user: User | null;
@@ -44,7 +46,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Restore the stored session on application startup.
         const token = localStorage.getItem('accessToken');
         const storedUser = localStorage.getItem('user');
 
@@ -73,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = async (credentials: LoginRequest) => {
         const response = await axios.post<LoginOtpResponse>(
-            `${API_URL}/auth/login`,
+            `${API_URL}/api/auth/login`,
             credentials,
         );
 
@@ -82,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const verifyOtp = async (data: VerifyOtpRequest) => {
         const response = await axios.post<AuthResponse>(
-            `${API_URL}/auth/verify-otp`,
+            `${API_URL}/api/auth/verify-otp`,
             data,
         );
 
@@ -91,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const register = async (data: RegisterRequest) => {
         const response = await axios.post<LoginOtpResponse>(
-            `${API_URL}/auth/register`,
+            `${API_URL}/api/auth/register`,
             data,
         );
 
@@ -100,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const verifyRegistration = async (data: VerifyOtpRequest) => {
         const response = await axios.post<AuthResponse>(
-            `${API_URL}/auth/verify-registration`,
+            `${API_URL}/api/auth/verify-registration`,
             data,
         );
 
