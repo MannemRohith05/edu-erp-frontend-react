@@ -1,8 +1,26 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    type ReactNode,
+} from 'react';
 import axios from 'axios';
-import type { User, AuthResponse, LoginOtpResponse, LoginRequest, RegisterRequest, VerifyOtpRequest } from '../types';
+import type {
+    User,
+    AuthResponse,
+    LoginOtpResponse,
+    LoginRequest,
+    RegisterRequest,
+    VerifyOtpRequest,
+} from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Connect to the deployed Render backend.
+const API_URL = (
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    '/api'
+).replace(/\/+$/, '');
 
 interface AuthContextType {
     user: User | null;
@@ -26,9 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check stored auth on mount
+        // Restore the stored session on application startup.
         const token = localStorage.getItem('accessToken');
         const storedUser = localStorage.getItem('user');
+
         if (token && storedUser) {
             try {
                 setUser(JSON.parse(storedUser));
@@ -39,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 localStorage.removeItem('user');
             }
         }
+
         setLoading(false);
     }, []);
 
@@ -46,35 +66,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('accessToken', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
         localStorage.setItem('user', JSON.stringify(response.user));
+
         setUser(response.user);
         setIsAuthenticated(true);
     };
 
     const login = async (credentials: LoginRequest) => {
-        const res = await axios.post<LoginOtpResponse>(`${API_URL}/auth/login`, credentials);
-        return res.data;
+        const response = await axios.post<LoginOtpResponse>(
+            `${API_URL}/auth/login`,
+            credentials,
+        );
+
+        return response.data;
     };
 
     const verifyOtp = async (data: VerifyOtpRequest) => {
-        const res = await axios.post<AuthResponse>(`${API_URL}/auth/verify-otp`, data);
-        handleAuthSuccess(res.data);
+        const response = await axios.post<AuthResponse>(
+            `${API_URL}/auth/verify-otp`,
+            data,
+        );
+
+        handleAuthSuccess(response.data);
     };
 
     const register = async (data: RegisterRequest) => {
-        const res = await axios.post<LoginOtpResponse>(`${API_URL}/auth/register`, data);
-        return res.data;
+        const response = await axios.post<LoginOtpResponse>(
+            `${API_URL}/auth/register`,
+            data,
+        );
+
+        return response.data;
     };
 
     const verifyRegistration = async (data: VerifyOtpRequest) => {
-        const res = await axios.post<AuthResponse>(`${API_URL}/auth/verify-registration`, data);
-        handleAuthSuccess(res.data);
-        return res.data;
+        const response = await axios.post<AuthResponse>(
+            `${API_URL}/auth/verify-registration`,
+            data,
+        );
+
+        handleAuthSuccess(response.data);
+        return response.data;
     };
 
     const logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+
         setUser(null);
         setIsAuthenticated(false);
     };
@@ -83,10 +121,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const hasRole = (role: string) => user?.role === role;
 
-    const hasAnyRole = (roles: string[]) => user ? roles.includes(user.role) : false;
+    const hasAnyRole = (roles: string[]) =>
+        user ? roles.includes(user.role) : false;
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, verifyOtp, register, verifyRegistration, logout, getToken, hasRole, hasAnyRole }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated,
+                loading,
+                login,
+                verifyOtp,
+                register,
+                verifyRegistration,
+                logout,
+                getToken,
+                hasRole,
+                hasAnyRole,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
@@ -94,6 +147,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (!context) throw new Error('useAuth must be used within AuthProvider');
+
+    if (!context) {
+        throw new Error('useAuth must be used within AuthProvider');
+    }
+
     return context;
 }
